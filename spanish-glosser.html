@@ -230,6 +230,27 @@
             font-size: 1.1rem;
         }
 
+        .font-size-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e0e0e0;
+            color: #333;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .font-size-btn:hover {
+            background: #3B82F6;
+            color: white;
+        }
+
         @media (max-width: 600px) {
             body { padding: 0.5rem; }
             h1 { font-size: 1.2rem; }
@@ -253,6 +274,8 @@
             <button class="btn-stop" id="stopBtn">Stop</button>
             <button class="btn-cache" id="clearCacheBtn">Clear Cache <span class="cache-count" id="cacheCount"></span></button>
             <button style="background-color:#14B8A6;font-size:0.8rem;" onclick="location.href='/chinese-glosser'">Chinese</button>
+            <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
+            <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
         </div>
 
         <textarea id="inputArea" placeholder="Paste Spanish text here..."></textarea>
@@ -467,6 +490,7 @@
 
             setStatus(`Done - ${total} words glossed`);
             updateCacheCount();
+            applyFontSize();
         }
 
         function showDetail(word, data) {
@@ -617,6 +641,31 @@
             });
         }
 
+        // ============ FONT SIZE ============
+        const FONT_KEY = 'spanish_glosser_fontsize';
+        let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 20;
+
+        function applyFontSize() {
+            document.querySelectorAll('.gloss-spanish').forEach(el => {
+                el.style.fontSize = glossFontSize + 'px';
+            });
+            document.querySelectorAll('.gloss-english').forEach(el => {
+                el.style.fontSize = Math.max(10, glossFontSize * 0.55) + 'px';
+            });
+        }
+
+        function changeFontSize(delta) {
+            glossFontSize += delta;
+            if (glossFontSize < 10) glossFontSize = 10;
+            if (glossFontSize > 48) glossFontSize = 48;
+            localStorage.setItem(FONT_KEY, glossFontSize);
+            applyFontSize();
+
+            const btn = delta > 0 ? document.getElementById('fontIncrease') : document.getElementById('fontDecrease');
+            btn.style.background = '#10B981';
+            setTimeout(() => { btn.style.background = '#e0e0e0'; }, 200);
+        }
+
         // ============ UTILITIES ============
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -658,6 +707,10 @@
 
             document.getElementById('playAllBtn').addEventListener('click', playAllWords);
             document.getElementById('stopBtn').addEventListener('click', stopTTS);
+
+            // Font size buttons
+            document.getElementById('fontIncrease').addEventListener('click', () => changeFontSize(2));
+            document.getElementById('fontDecrease').addEventListener('click', () => changeFontSize(-2));
 
             // Load voices
             speechSynthesis.addEventListener('voiceschanged', () => speechSynthesis.getVoices());

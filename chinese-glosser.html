@@ -269,6 +269,27 @@
             font-size: 1.1rem;
         }
 
+        .font-size-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e0e0e0;
+            color: #333;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .font-size-btn:hover {
+            background: #3B82F6;
+            color: white;
+        }
+
         @media (max-width: 600px) {
             body { padding: 0.5rem; }
             h1 { font-size: 1.2rem; }
@@ -300,6 +321,8 @@
             <button class="btn-stop" id="stopBtn">Stop</button>
             <button class="btn-cache" id="clearCacheBtn">Clear Cache <span class="cache-count" id="cacheCount"></span></button>
             <button class="btn-nav" onclick="location.href='/spanish-glosser'">Spanish</button>
+            <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
+            <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
         </div>
 
         <div class="lang-toggle">
@@ -558,6 +581,7 @@
 
             setStatus(`Done - ${total} characters glossed`);
             updateCacheCount();
+            applyFontSize();
         }
 
         function showDetail(char, data) {
@@ -680,6 +704,34 @@
             }, 50);
         }
 
+        // ============ FONT SIZE ============
+        const FONT_KEY = 'chinese_glosser_fontsize';
+        let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 32;
+
+        function applyFontSize() {
+            document.querySelectorAll('.gloss-chinese').forEach(el => {
+                el.style.fontSize = glossFontSize + 'px';
+            });
+            document.querySelectorAll('.gloss-pinyin').forEach(el => {
+                el.style.fontSize = Math.max(10, glossFontSize * 0.4) + 'px';
+            });
+            document.querySelectorAll('.gloss-english').forEach(el => {
+                el.style.fontSize = Math.max(9, glossFontSize * 0.35) + 'px';
+            });
+        }
+
+        function changeFontSize(delta) {
+            glossFontSize += delta;
+            if (glossFontSize < 16) glossFontSize = 16;
+            if (glossFontSize > 64) glossFontSize = 64;
+            localStorage.setItem(FONT_KEY, glossFontSize);
+            applyFontSize();
+
+            const btn = delta > 0 ? document.getElementById('fontIncrease') : document.getElementById('fontDecrease');
+            btn.style.background = '#10B981';
+            setTimeout(() => { btn.style.background = '#e0e0e0'; }, 200);
+        }
+
         // ============ COPY GLOSS ============
         function copyGloss() {
             const glossArea = document.getElementById('glossArea');
@@ -757,6 +809,10 @@
 
             document.getElementById('playAllBtn').addEventListener('click', playAllWords);
             document.getElementById('stopBtn').addEventListener('click', stopTTS);
+
+            // Font size buttons
+            document.getElementById('fontIncrease').addEventListener('click', () => changeFontSize(2));
+            document.getElementById('fontDecrease').addEventListener('click', () => changeFontSize(-2));
 
             speechSynthesis.addEventListener('voiceschanged', () => speechSynthesis.getVoices());
 
