@@ -53,8 +53,26 @@
         .btn-clear:hover { background-color: #4B5563; }
         .btn-gloss { background-color: #10B981; }
         .btn-gloss:hover { background-color: #059669; }
-        .btn-copy { background-color: #8B5CF6; }
-        .btn-copy:hover { background-color: #7C3AED; }
+        .btn-paste2nd { background-color: #8B5CF6; }
+        .btn-paste2nd:hover { background-color: #7C3AED; }
+        .reference-area {
+            width: 100%;
+            min-height: 80px;
+            background: #1e1e3a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #e0e0e0;
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .reference-area .placeholder {
+            color: #666;
+            font-style: italic;
+        }
         .btn-cache { background-color: #F59E0B; color: #1a1a2e; }
         .btn-cache:hover { background-color: #D97706; }
         .btn-play { background-color: #EF4444; }
@@ -315,7 +333,6 @@
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
             <button class="btn-gloss" id="glossBtn">Gloss</button>
-            <button class="btn-copy" id="copyBtn">Copy Gloss</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
@@ -323,6 +340,7 @@
             <button class="btn-nav" onclick="location.href='/spanish-glosser'">Spanish</button>
             <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
             <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
+            <button class="btn-paste2nd" id="paste2ndBtn">Paste 2nd</button>
         </div>
 
         <div class="lang-toggle">
@@ -344,6 +362,10 @@
             <div class="detail-pinyin" id="detailPinyin"></div>
             <div class="detail-translation" id="detailTranslation"></div>
             <div class="detail-extra" id="detailExtra"></div>
+        </div>
+
+        <div class="reference-area" id="referenceArea">
+            <div class="placeholder">Paste 2nd content (e.g. English reference) will appear here</div>
         </div>
     </div>
 
@@ -732,41 +754,16 @@
             setTimeout(() => { btn.style.background = '#e0e0e0'; }, 200);
         }
 
-        // ============ COPY GLOSS ============
-        function copyGloss() {
-            const glossArea = document.getElementById('glossArea');
-            const lines = glossArea.querySelectorAll('.gloss-line');
-            if (lines.length === 0) {
-                setStatus('Nothing to copy');
-                return;
+        // ============ PASTE 2ND ============
+        async function paste2nd() {
+            try {
+                const text = await navigator.clipboard.readText();
+                const refArea = document.getElementById('referenceArea');
+                refArea.textContent = text;
+                setStatus('Reference text pasted');
+            } catch {
+                setStatus('Failed to read clipboard');
             }
-
-            const output = [];
-            for (const line of lines) {
-                const words = line.querySelectorAll('.gloss-word:not(.punctuation)');
-                const chineseLine = [];
-                const englishLine = [];
-
-                for (const wordEl of words) {
-                    const ch = wordEl.querySelector('.gloss-chinese')?.textContent || '';
-                    const en = wordEl.querySelector('.gloss-english')?.textContent || '';
-                    chineseLine.push(ch);
-                    englishLine.push(en);
-                }
-
-                if (chineseLine.length > 0) {
-                    output.push(chineseLine.join(''));
-                    output.push(englishLine.join(' | '));
-                    output.push('');
-                }
-            }
-
-            const text = output.join('\n');
-            navigator.clipboard.writeText(text).then(() => {
-                setStatus('Gloss copied to clipboard');
-            }).catch(() => {
-                setStatus('Failed to copy');
-            });
         }
 
         // ============ UTILITIES ============
@@ -798,12 +795,13 @@
             });
 
             document.getElementById('glossBtn').addEventListener('click', glossText);
-            document.getElementById('copyBtn').addEventListener('click', copyGloss);
+            document.getElementById('paste2ndBtn').addEventListener('click', paste2nd);
 
             document.getElementById('clearBtn').addEventListener('click', () => {
                 document.getElementById('inputArea').value = '';
                 document.getElementById('glossArea').innerHTML = '<div class="placeholder">Glossed text will appear here</div>';
                 document.getElementById('detailPanel').classList.remove('visible');
+                document.getElementById('referenceArea').innerHTML = '<div class="placeholder">Paste 2nd content (e.g. English reference) will appear here</div>';
                 setStatus('Cleared');
             });
 
