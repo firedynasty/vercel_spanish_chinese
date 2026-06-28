@@ -1,0 +1,10 @@
+{
+  "name": "vercel-spanish-glosser",
+  "version": "1.0.0",
+  "description": "Spanish text glosser - paste text and get word-by-word English definitions",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "dependencies": {}
+}
