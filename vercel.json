@@ -4,6 +4,8 @@
     { "source": "/spanish-glosser", "destination": "/spanish-glosser.html" },
     { "source": "/chinese-glosser.html", "destination": "/chinese-glosser.html" },
     { "source": "/chinese-glosser", "destination": "/chinese-glosser.html" },
+    { "source": "/english-glosser.html", "destination": "/english-glosser.html" },
+    { "source": "/english-glosser", "destination": "/english-glosser.html" },
     { "source": "/(.*)", "destination": "/spanish-glosser.html" }
   ]
 }

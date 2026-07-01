@@ -1,13 +1,13 @@
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinese Glosser</title>
+    <title>English Glosser</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background-color: #1a1a2e;
             color: #e0e0e0;
             padding: 1rem;
@@ -21,7 +21,7 @@
 
         h1 {
             text-align: center;
-            color: #ffd43b;
+            color: #60a5fa;
             margin-bottom: 1rem;
             font-size: 1.5rem;
         }
@@ -53,58 +53,12 @@
         .btn-clear:hover { background-color: #4B5563; }
         .btn-gloss { background-color: #10B981; }
         .btn-gloss:hover { background-color: #059669; }
-        .btn-paste2nd { background-color: #8B5CF6; }
-        .btn-paste2nd:hover { background-color: #7C3AED; }
-        .reference-area {
-            width: 100%;
-            min-height: 80px;
-            background: #1e1e3a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-            color: #e0e0e0;
-            font-size: 1rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .reference-area .placeholder {
-            color: #666;
-            font-style: italic;
-        }
         .btn-cache { background-color: #F59E0B; color: #1a1a2e; }
         .btn-cache:hover { background-color: #D97706; }
         .btn-play { background-color: #EF4444; }
         .btn-play:hover { background-color: #DC2626; }
         .btn-stop { background-color: #6B7280; }
         .btn-stop:hover { background-color: #4B5563; }
-        .btn-nav { background-color: #14B8A6; font-size: 0.8rem; }
-        .btn-nav:hover { background-color: #0D9488; }
-
-        .lang-toggle {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: #16213e;
-            border-radius: 6px;
-        }
-
-        .lang-toggle label {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .lang-toggle input[type="radio"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
 
         textarea {
             width: 100%;
@@ -114,8 +68,8 @@
             border-radius: 8px;
             background: #16213e;
             color: #e0e0e0;
-            font-family: "Microsoft YaHei", "PingFang SC", inherit;
-            font-size: 1.1rem;
+            font-family: inherit;
+            font-size: 1rem;
             resize: vertical;
             margin-bottom: 1rem;
             outline: none;
@@ -149,7 +103,7 @@
         .gloss-line {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.2rem;
+            gap: 0.3rem;
             margin-bottom: 1.2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #2a2a4a;
@@ -165,11 +119,11 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            padding: 0.4rem 0.5rem;
+            padding: 0.3rem 0.5rem;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
-            min-width: 50px;
+            min-width: 40px;
         }
 
         .gloss-word:hover {
@@ -185,26 +139,19 @@
             box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
         }
 
-        .gloss-chinese {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #ffd43b;
-            margin-bottom: 0.15rem;
-        }
-
-        .gloss-pinyin {
-            font-size: 0.8rem;
-            color: #93C5FD;
-            margin-bottom: 0.1rem;
-        }
-
         .gloss-english {
-            font-size: 0.7rem;
-            color: #9ca3af;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 0.2rem;
+        }
+
+        .gloss-chinese {
+            font-size: 0.85rem;
+            color: #fbbf24;
             text-align: center;
-            max-width: 90px;
+            max-width: 120px;
             word-wrap: break-word;
-            line-height: 1.3;
         }
 
         .gloss-word.punctuation {
@@ -217,7 +164,7 @@
             background-color: transparent;
         }
 
-        .gloss-word.punctuation .gloss-chinese {
+        .gloss-word.punctuation .gloss-english {
             color: #6B7280;
         }
 
@@ -233,22 +180,16 @@
         .detail-panel.visible { display: block; }
 
         .detail-word {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #ffd43b;
-            margin-bottom: 0.3rem;
-        }
-
-        .detail-pinyin {
-            font-size: 1.1rem;
-            color: #93C5FD;
-            margin-bottom: 0.3rem;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
         }
 
         .detail-translation {
-            font-size: 1rem;
-            color: #e0e0e0;
-            margin-bottom: 0.3rem;
+            font-size: 1.3rem;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
         }
 
         .detail-extra {
@@ -313,22 +254,14 @@
             h1 { font-size: 1.2rem; }
             .button-group { gap: 0.3rem; }
             button { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
-            .gloss-area { padding: 0.8rem; }
-            .gloss-line { gap: 0.15rem; }
-            .gloss-word { min-width: 44px; padding: 0.4rem 0.3rem; }
-            .gloss-chinese { font-size: 2.2rem; }
-            .gloss-pinyin { font-size: 0.85rem; }
-            .gloss-english { font-size: 0.7rem; max-width: 70px; }
-            .detail-word { font-size: 2.5rem; }
-            .detail-pinyin { font-size: 1.2rem; }
-            .detail-translation { font-size: 1.1rem; }
-            .lang-toggle { gap: 0.5rem; padding: 0.5rem 0.6rem; font-size: 0.85rem; }
+            .gloss-area { padding: 1rem; }
+            .gloss-english { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Chinese Glosser</h1>
+        <h1>English Glosser</h1>
 
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
@@ -337,22 +270,13 @@
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
             <button class="btn-cache" id="clearCacheBtn">Clear Cache <span class="cache-count" id="cacheCount"></span></button>
-            <button class="btn-nav" onclick="location.href='/spanish-glosser'">Spanish</button>
-            <button style="background-color:#3B82F6;font-size:0.8rem;padding:0.5rem 0.8rem;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;" onclick="location.href='/english-glosser'">English</button>
             <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
             <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
-            <button class="btn-paste2nd" id="paste2ndBtn">Paste 2nd</button>
         </div>
 
-        <div class="lang-toggle">
-            <span>TTS Voice:</span>
-            <label><input type="radio" name="ttsLang" value="zh-CN" checked> Mandarin</label>
-            <label><input type="radio" name="ttsLang" value="zh-HK"> Cantonese</label>
-        </div>
+        <textarea id="inputArea" placeholder="Paste English text here..."></textarea>
 
-        <textarea id="inputArea" placeholder="Paste Chinese text here..."></textarea>
-
-        <div class="status" id="status">Ready - paste Chinese text and click Gloss</div>
+        <div class="status" id="status">Ready - paste English text and click Gloss</div>
 
         <div class="gloss-area" id="glossArea">
             <div class="placeholder">Glossed text will appear here</div>
@@ -360,20 +284,15 @@
 
         <div class="detail-panel" id="detailPanel">
             <div class="detail-word" id="detailWord"></div>
-            <div class="detail-pinyin" id="detailPinyin"></div>
             <div class="detail-translation" id="detailTranslation"></div>
             <div class="detail-extra" id="detailExtra"></div>
         </div>
 
-        <div class="reference-area" id="referenceArea">
-            <div class="placeholder">Paste 2nd content (e.g. English reference) will appear here</div>
-        </div>
     </div>
 
-    <script src="char_dict.js"></script>
     <script>
         // ============ DICTIONARY CACHE ============
-        const CACHE_KEY = 'chinese_glosser_cache';
+        const CACHE_KEY = 'english_glosser_cache';
 
         function getCache() {
             try {
@@ -387,12 +306,12 @@
 
         function getCachedWord(word) {
             const cache = getCache();
-            return cache[word] || null;
+            return cache[word.toLowerCase()] || null;
         }
 
         function cacheWord(word, data) {
             const cache = getCache();
-            cache[word] = data;
+            cache[word.toLowerCase()] = data;
             setCache(cache);
         }
 
@@ -402,42 +321,27 @@
             document.getElementById('cacheCount').textContent = count > 0 ? `(${count})` : '';
         }
 
-        // ============ LOOKUP ============
-        // Looks up from bundled 3000-char dictionary first, falls back to API
-        async function translateChar(char) {
-            // Check bundled dictionary (char_dict.js)
-            if (typeof CHAR_DICT !== 'undefined' && CHAR_DICT[char]) {
-                const entry = CHAR_DICT[char];
-                return {
-                    translation: entry.d || '?',
-                    pinyin: entry.p || '',
-                    jyutping: entry.c || '',
-                    traditional: entry.t || '',
-                    radical: entry.r || '',
-                    strokes: entry.s || '',
-                    alternatives: [],
-                    source: 'dict'
-                };
-            }
-
-            // Check localStorage cache for API results
-            const cached = getCachedWord(char);
+        // ============ TRANSLATION API ============
+        // Uses MyMemory free translation API (no key required)
+        // English -> Chinese (Simplified)
+        async function translateWord(word) {
+            const cached = getCachedWord(word);
             if (cached) return cached;
 
-            // Fall back to MyMemory API
             try {
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(char)}&langpair=zh|en&de=stanley.tan19@gmail.com`;
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|zh-CN&de=stanley.tan19@gmail.com`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('API error');
                 const data = await response.json();
 
                 const mainTranslation = data.responseData?.translatedText || '';
 
+                // Gather alternative translations from matches
                 const alternatives = [];
                 if (data.matches) {
                     for (const match of data.matches) {
                         const t = match.translation;
-                        if (t && t.toLowerCase() !== mainTranslation.toLowerCase() && !alternatives.includes(t)) {
+                        if (t && t !== mainTranslation && !alternatives.includes(t)) {
                             alternatives.push(t);
                             if (alternatives.length >= 3) break;
                         }
@@ -446,63 +350,42 @@
 
                 const result = {
                     translation: mainTranslation,
-                    pinyin: '',
-                    jyutping: '',
-                    traditional: '',
-                    radical: '',
-                    strokes: '',
                     alternatives: alternatives,
-                    source: 'api'
+                    quality: data.responseData?.match || 0
                 };
 
-                cacheWord(char, result);
+                cacheWord(word, result);
                 updateCacheCount();
                 return result;
             } catch (err) {
-                console.error(`Failed to translate "${char}":`, err);
-                return { translation: '?', pinyin: '', jyutping: '', alternatives: [], source: 'none' };
+                console.error(`Failed to translate "${word}":`, err);
+                return { translation: '?', alternatives: [], quality: 0 };
             }
         }
 
         // ============ TEXT PROCESSING ============
-        function isCJK(char) {
-            const code = char.charCodeAt(0);
-            return (code >= 0x4e00 && code <= 0x9fff) ||
-                   (code >= 0x3400 && code <= 0x4dbf) ||
-                   (code >= 0xf900 && code <= 0xfaff);
-        }
-
-        function isChinesePunct(char) {
-            return /[，。！？；：、""''（）【】《》—…·\u3000-\u303f\uff00-\uffef]/.test(char);
-        }
-
         function tokenize(text) {
+            const tokens = [];
             const lines = text.split('\n');
-            const result = [];
 
-            for (const line of lines) {
-                const trimmed = line.trim();
-                if (!trimmed) continue;
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
 
-                const tokens = [];
-                for (const char of trimmed) {
-                    if (isCJK(char)) {
-                        tokens.push({ type: 'char', text: char });
-                    } else if (isChinesePunct(char) || /[.,!?;:'"()\-]/.test(char)) {
-                        tokens.push({ type: 'punct', text: char });
-                    } else if (char.trim()) {
-                        // Non-CJK letter/number — group consecutive ones
-                        if (tokens.length > 0 && tokens[tokens.length - 1].type === 'other') {
-                            tokens[tokens.length - 1].text += char;
-                        } else {
-                            tokens.push({ type: 'other', text: char });
-                        }
+                const lineTokens = [];
+                const lineRegex = /([a-zA-Z''-]+)|([^\s])/g;
+                let match;
+                while ((match = lineRegex.exec(line)) !== null) {
+                    if (match[1]) {
+                        lineTokens.push({ type: 'word', text: match[1] });
+                    } else if (match[2]) {
+                        lineTokens.push({ type: 'punct', text: match[2] });
                     }
                 }
-                result.push(tokens);
+                tokens.push(lineTokens);
             }
 
-            return result;
+            return tokens;
         }
 
         // ============ GLOSSING ENGINE ============
@@ -516,38 +399,39 @@
             const glossArea = document.getElementById('glossArea');
             const lines = tokenize(input);
 
-            // Collect unique characters
-            const uniqueChars = new Set();
+            // Collect unique words
+            const uniqueWords = new Set();
             for (const line of lines) {
                 for (const token of line) {
-                    if (token.type === 'char') {
-                        uniqueChars.add(token.text);
+                    if (token.type === 'word') {
+                        uniqueWords.add(token.text.toLowerCase());
                     }
                 }
             }
 
-            const charArray = [...uniqueChars];
-            const total = charArray.length;
+            const wordArray = [...uniqueWords];
+            const total = wordArray.length;
             let completed = 0;
 
-            setStatus(`<span class="loading-spinner"></span> Glossing ${total} unique characters...`);
+            setStatus(`<span class="loading-spinner"></span> Glossing ${total} unique words...`);
 
+            // Translate in batches to avoid rate limiting
             const BATCH_SIZE = 5;
             const BATCH_DELAY = 300;
             const translations = {};
 
-            for (let i = 0; i < charArray.length; i += BATCH_SIZE) {
-                const batch = charArray.slice(i, i + BATCH_SIZE);
-                const promises = batch.map(async (char) => {
-                    const result = await translateChar(char);
-                    translations[char] = result;
+            for (let i = 0; i < wordArray.length; i += BATCH_SIZE) {
+                const batch = wordArray.slice(i, i + BATCH_SIZE);
+                const promises = batch.map(async (word) => {
+                    const result = await translateWord(word);
+                    translations[word] = result;
                     completed++;
                     setStatus(`<span class="loading-spinner"></span> Glossing... ${completed}/${total}`);
                 });
 
                 await Promise.all(promises);
 
-                if (i + BATCH_SIZE < charArray.length) {
+                if (i + BATCH_SIZE < wordArray.length) {
                     await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
                 }
             }
@@ -561,24 +445,18 @@
                 for (const token of line) {
                     const wordDiv = document.createElement('div');
 
-                    if (token.type === 'char') {
+                    if (token.type === 'word') {
                         wordDiv.className = 'gloss-word';
-                        const data = translations[token.text] || { translation: '?', pinyin: '', alternatives: [] };
+                        const data = translations[token.text.toLowerCase()] || { translation: '?', alternatives: [] };
 
                         let shortTranslation = data.translation || '?';
-                        if (shortTranslation.length > 12) {
-                            shortTranslation = shortTranslation.substring(0, 10) + '...';
+                        if (shortTranslation.length > 8) {
+                            shortTranslation = shortTranslation.substring(0, 6) + '...';
                         }
 
-                        // Show pinyin or jyutping based on toggle
-                        const isCanto = getSelectedLang() === 'zh-HK';
-                        const romanization = isCanto ? (data.jyutping || data.pinyin || '') : (data.pinyin || '');
-                        const pinyinHtml = romanization ? `<span class="gloss-pinyin">${escapeHtml(romanization)}</span>` : '';
-
                         wordDiv.innerHTML = `
-                            <span class="gloss-chinese">${escapeHtml(token.text)}</span>
-                            ${pinyinHtml}
-                            <span class="gloss-english">${escapeHtml(shortTranslation.toLowerCase())}</span>
+                            <span class="gloss-english">${escapeHtml(token.text)}</span>
+                            <span class="gloss-chinese">${escapeHtml(shortTranslation)}</span>
                         `;
 
                         wordDiv.addEventListener('click', () => {
@@ -588,12 +466,9 @@
                             showDetail(token.text, data);
                             speakWord(token.text);
                         });
-                    } else if (token.type === 'punct') {
-                        wordDiv.className = 'gloss-word punctuation';
-                        wordDiv.innerHTML = `<span class="gloss-chinese">${escapeHtml(token.text)}</span>`;
                     } else {
                         wordDiv.className = 'gloss-word punctuation';
-                        wordDiv.innerHTML = `<span class="gloss-chinese" style="font-size:0.9rem;color:#9ca3af;">${escapeHtml(token.text)}</span>`;
+                        wordDiv.innerHTML = `<span class="gloss-english">${escapeHtml(token.text)}</span><span class="gloss-chinese">&nbsp;</span>`;
                     }
 
                     lineDiv.appendChild(wordDiv);
@@ -602,30 +477,20 @@
                 glossArea.appendChild(lineDiv);
             }
 
-            setStatus(`Done - ${total} characters glossed`);
+            setStatus(`Done - ${total} words glossed`);
             updateCacheCount();
             applyFontSize();
         }
 
-        function showDetail(char, data) {
+        function showDetail(word, data) {
             const panel = document.getElementById('detailPanel');
-            document.getElementById('detailWord').textContent = char + (data.traditional && data.traditional !== char ? ` (${data.traditional})` : '');
-
-            // Show both pinyin and jyutping if available
-            let pinyinText = '';
-            if (data.pinyin) pinyinText += `Pinyin: ${data.pinyin}`;
-            if (data.jyutping) pinyinText += `${pinyinText ? '  |  ' : ''}Jyutping: ${data.jyutping}`;
-            document.getElementById('detailPinyin').textContent = pinyinText;
-
+            document.getElementById('detailWord').textContent = word;
             document.getElementById('detailTranslation').textContent = data.translation || 'No translation found';
 
             let extra = '';
-            if (data.radical) extra += `Radical: ${data.radical}`;
-            if (data.strokes) extra += `${extra ? '  |  ' : ''}Strokes: ${data.strokes}`;
             if (data.alternatives && data.alternatives.length > 0) {
-                extra += `${extra ? '  |  ' : ''}Also: ${data.alternatives.join(', ')}`;
+                extra += 'Also: ' + data.alternatives.join(', ');
             }
-            if (data.source) extra += `${extra ? '  |  ' : ''}Source: ${data.source === 'dict' ? 'Local (3000 chars)' : 'API'}`;
             document.getElementById('detailExtra').textContent = extra;
 
             panel.classList.add('visible');
@@ -636,26 +501,21 @@
         let ttsWordElements = [];
         let ttsWordIndex = 0;
 
-        function getSelectedLang() {
-            return document.querySelector('input[name="ttsLang"]:checked')?.value || 'zh-CN';
-        }
-
-        function getChineseVoice() {
-            const lang = getSelectedLang();
+        function getEnglishVoice() {
             const voices = speechSynthesis.getVoices();
-            return voices.find(v => v.lang === lang && v.name.includes('Google'))
-                || voices.find(v => v.lang === lang && (v.name.includes('Enhanced') || v.name.includes('Premium')))
-                || voices.find(v => v.lang === lang)
-                || voices.find(v => v.lang.startsWith(lang.substring(0, 2)))
+            return voices.find(v => v.lang === 'en-US' && v.name.includes('Google'))
+                || voices.find(v => v.lang === 'en-US' && (v.name.includes('Enhanced') || v.name.includes('Premium')))
+                || voices.find(v => v.lang === 'en-US')
+                || voices.find(v => v.lang.startsWith('en'))
                 || null;
         }
 
         function speakWord(word) {
             speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = getSelectedLang();
-            utterance.rate = 0.8;
-            const voice = getChineseVoice();
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            const voice = getEnglishVoice();
             if (voice) utterance.voice = voice;
             speechSynthesis.speak(utterance);
         }
@@ -692,8 +552,8 @@
             document.querySelectorAll('.gloss-word.speaking').forEach(el => el.classList.remove('speaking'));
 
             const el = ttsWordElements[ttsWordIndex];
-            const chineseText = el.querySelector('.gloss-chinese')?.textContent || '';
-            if (!chineseText) {
+            const englishText = el.querySelector('.gloss-english')?.textContent || '';
+            if (!englishText) {
                 ttsWordIndex++;
                 speakNextWord();
                 return;
@@ -701,18 +561,18 @@
 
             el.classList.add('speaking');
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${chineseText}`);
+            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${englishText}`);
 
-            const utterance = new SpeechSynthesisUtterance(chineseText);
-            utterance.lang = getSelectedLang();
-            utterance.rate = 0.8;
-            const voice = getChineseVoice();
+            const utterance = new SpeechSynthesisUtterance(englishText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            const voice = getEnglishVoice();
             if (voice) utterance.voice = voice;
 
             utterance.onend = () => {
                 ttsWordIndex++;
                 if (ttsPlaying) {
-                    setTimeout(() => speakNextWord(), 200);
+                    setTimeout(() => speakNextWord(), 150);
                 }
             };
 
@@ -728,43 +588,28 @@
         }
 
         // ============ FONT SIZE ============
-        const FONT_KEY = 'chinese_glosser_fontsize';
-        let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 32;
+        const FONT_KEY = 'english_glosser_fontsize';
+        let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 20;
 
         function applyFontSize() {
-            document.querySelectorAll('.gloss-chinese').forEach(el => {
+            document.querySelectorAll('.gloss-english').forEach(el => {
                 el.style.fontSize = glossFontSize + 'px';
             });
-            document.querySelectorAll('.gloss-pinyin').forEach(el => {
-                el.style.fontSize = Math.max(10, glossFontSize * 0.4) + 'px';
-            });
-            document.querySelectorAll('.gloss-english').forEach(el => {
-                el.style.fontSize = Math.max(9, glossFontSize * 0.35) + 'px';
+            document.querySelectorAll('.gloss-chinese').forEach(el => {
+                el.style.fontSize = Math.max(12, glossFontSize * 0.65) + 'px';
             });
         }
 
         function changeFontSize(delta) {
             glossFontSize += delta;
-            if (glossFontSize < 16) glossFontSize = 16;
-            if (glossFontSize > 64) glossFontSize = 64;
+            if (glossFontSize < 10) glossFontSize = 10;
+            if (glossFontSize > 48) glossFontSize = 48;
             localStorage.setItem(FONT_KEY, glossFontSize);
             applyFontSize();
 
             const btn = delta > 0 ? document.getElementById('fontIncrease') : document.getElementById('fontDecrease');
             btn.style.background = '#10B981';
             setTimeout(() => { btn.style.background = '#e0e0e0'; }, 200);
-        }
-
-        // ============ PASTE 2ND ============
-        async function paste2nd() {
-            try {
-                const text = await navigator.clipboard.readText();
-                const refArea = document.getElementById('referenceArea');
-                refArea.textContent = text;
-                setStatus('Reference text pasted');
-            } catch {
-                setStatus('Failed to read clipboard');
-            }
         }
 
         // ============ UTILITIES ============
@@ -796,20 +641,17 @@
             });
 
             document.getElementById('glossBtn').addEventListener('click', glossText);
-            document.getElementById('paste2ndBtn').addEventListener('click', paste2nd);
 
             document.getElementById('clearBtn').addEventListener('click', () => {
                 document.getElementById('inputArea').value = '';
                 document.getElementById('glossArea').innerHTML = '<div class="placeholder">Glossed text will appear here</div>';
                 document.getElementById('detailPanel').classList.remove('visible');
-                document.getElementById('referenceArea').innerHTML = '<div class="placeholder">Paste 2nd content (e.g. English reference) will appear here</div>';
                 setStatus('Cleared');
             });
 
             document.getElementById('playAllBtn').addEventListener('click', playAllWords);
             document.getElementById('stopBtn').addEventListener('click', stopTTS);
 
-            // Font size buttons
             document.getElementById('fontIncrease').addEventListener('click', () => changeFontSize(2));
             document.getElementById('fontDecrease').addEventListener('click', () => changeFontSize(-2));
 
@@ -820,7 +662,7 @@
                 const count = Object.keys(cache).length;
                 localStorage.removeItem(CACHE_KEY);
                 updateCacheCount();
-                setStatus(`Cache cleared (${count} characters removed)`);
+                setStatus(`Cache cleared (${count} words removed)`);
             });
 
             document.addEventListener('keydown', (e) => {
