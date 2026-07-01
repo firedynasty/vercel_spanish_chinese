@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Glosser</title>
+    <title>Reverse English Glosser</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -198,6 +198,55 @@
             line-height: 1.6;
         }
 
+        .toggle-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .toggle-label.active {
+            color: white;
+            background: #3B82F6;
+        }
+
+        .toggle-label:hover {
+            color: white;
+        }
+
+        .tts-slider {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: #4B5563;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .tts-slider.cantonese {
+            background: #14B8A6;
+        }
+
+        .tts-slider .slider-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .tts-slider.cantonese .slider-thumb {
+            transform: translateX(22px);
+        }
+
         .loading-spinner {
             display: inline-block;
             width: 16px;
@@ -261,7 +310,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>English Glosser</h1>
+        <h1>Reverse English Glosser</h1>
 
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
@@ -270,9 +319,13 @@
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
             <button class="btn-cache" id="clearCacheBtn">Clear Cache <span class="cache-count" id="cacheCount"></span></button>
-            <button style="background-color:#8B5CF6;font-size:0.8rem;" onclick="location.href='/reverse-english'">Reverse English</button>
             <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
             <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
+            <span class="toggle-label active" id="labelMandarin">Mandarin</span>
+            <div class="tts-slider" id="ttsSlider">
+                <div class="slider-thumb"></div>
+            </div>
+            <span class="toggle-label" id="labelCantonese">Cantonese</span>
         </div>
 
         <textarea id="inputArea" placeholder="Paste English text here..."></textarea>
@@ -293,7 +346,7 @@
 
     <script>
         // ============ DICTIONARY CACHE ============
-        const CACHE_KEY = 'english_glosser_cache';
+        const CACHE_KEY = 'reverse_english_glosser_cache';
 
         function getCache() {
             try {
@@ -323,8 +376,6 @@
         }
 
         // ============ TRANSLATION API ============
-        // Uses MyMemory free translation API (no key required)
-        // English -> Chinese (Simplified)
         async function translateWord(word) {
             const cached = getCachedWord(word);
             if (cached) return cached;
@@ -337,7 +388,6 @@
 
                 const mainTranslation = data.responseData?.translatedText || '';
 
-                // Gather alternative translations from matches
                 const alternatives = [];
                 if (data.matches) {
                     for (const match of data.matches) {
@@ -374,7 +424,7 @@
                 if (!line) continue;
 
                 const lineTokens = [];
-                const lineRegex = /([a-zA-Z''-]+)|([^\s])/g;
+                const lineRegex = /([a-zA-Z''\-]+)|([^\s])/g;
                 let match;
                 while ((match = lineRegex.exec(line)) !== null) {
                     if (match[1]) {
@@ -400,7 +450,6 @@
             const glossArea = document.getElementById('glossArea');
             const lines = tokenize(input);
 
-            // Collect unique words
             const uniqueWords = new Set();
             for (const line of lines) {
                 for (const token of line) {
@@ -416,7 +465,6 @@
 
             setStatus(`<span class="loading-spinner"></span> Glossing ${total} unique words...`);
 
-            // Translate in batches to avoid rate limiting
             const BATCH_SIZE = 5;
             const BATCH_DELAY = 300;
             const translations = {};
@@ -437,7 +485,6 @@
                 }
             }
 
-            // Render glossed output
             glossArea.innerHTML = '';
             for (const line of lines) {
                 const lineDiv = document.createElement('div');
@@ -465,7 +512,7 @@
                             document.querySelectorAll('.gloss-word.selected').forEach(el => el.classList.remove('selected'));
                             wordDiv.classList.add('selected');
                             showDetail(token.text, data);
-                            speakWord(token.text);
+                            speakChinese(data.translation);
                         });
                     } else {
                         wordDiv.className = 'gloss-word punctuation';
@@ -487,7 +534,6 @@
             const panel = document.getElementById('detailPanel');
             document.getElementById('detailWord').textContent = word;
             document.getElementById('detailTranslation').textContent = data.translation || 'No translation found';
-
             let extra = '';
             if (data.alternatives && data.alternatives.length > 0) {
                 extra += 'Also: ' + data.alternatives.join(', ');
@@ -497,29 +543,53 @@
             panel.classList.add('visible');
         }
 
-        // ============ TEXT-TO-SPEECH ============
-        let ttsPlaying = false;
-        let ttsWordElements = [];
-        let ttsWordIndex = 0;
+        // ============ TTS LANGUAGE TOGGLE ============
+        let ttsLang = 'zh-CN'; // 'zh-CN' for Mandarin, 'zh-HK' for Cantonese
 
-        function getEnglishVoice() {
+        function toggleTTSLang() {
+            if (ttsLang === 'zh-CN') {
+                ttsLang = 'zh-HK';
+                document.getElementById('ttsSlider').classList.add('cantonese');
+                document.getElementById('labelMandarin').classList.remove('active');
+                document.getElementById('labelCantonese').classList.add('active');
+            } else {
+                ttsLang = 'zh-CN';
+                document.getElementById('ttsSlider').classList.remove('cantonese');
+                document.getElementById('labelCantonese').classList.remove('active');
+                document.getElementById('labelMandarin').classList.add('active');
+            }
+        }
+
+        function getChineseVoice() {
             const voices = speechSynthesis.getVoices();
-            return voices.find(v => v.lang === 'en-US' && v.name.includes('Google'))
-                || voices.find(v => v.lang === 'en-US' && (v.name.includes('Enhanced') || v.name.includes('Premium')))
-                || voices.find(v => v.lang === 'en-US')
-                || voices.find(v => v.lang.startsWith('en'))
+            if (ttsLang === 'zh-HK') {
+                return voices.find(v => v.lang === 'zh-HK' && v.name.includes('Google'))
+                    || voices.find(v => v.lang === 'zh-HK')
+                    || voices.find(v => v.lang === 'yue-HK')
+                    || voices.find(v => v.lang.startsWith('zh') && (v.name.includes('Cantonese') || v.name.includes('HK')))
+                    || null;
+            }
+            return voices.find(v => v.lang === 'zh-CN' && v.name.includes('Google'))
+                || voices.find(v => v.lang === 'zh-CN')
+                || voices.find(v => v.lang.startsWith('zh') && (v.name.includes('Mandarin') || v.name.includes('CN')))
                 || null;
         }
 
-        function speakWord(word) {
+        function speakChinese(text) {
+            if (!text) return;
             speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = ttsLang;
             utterance.rate = 0.85;
-            const voice = getEnglishVoice();
+            const voice = getChineseVoice();
             if (voice) utterance.voice = voice;
             speechSynthesis.speak(utterance);
         }
+
+        // ============ TEXT-TO-SPEECH (Play All - reads Chinese) ============
+        let ttsPlaying = false;
+        let ttsWordElements = [];
+        let ttsWordIndex = 0;
 
         function stopTTS() {
             speechSynthesis.cancel();
@@ -553,8 +623,8 @@
             document.querySelectorAll('.gloss-word.speaking').forEach(el => el.classList.remove('speaking'));
 
             const el = ttsWordElements[ttsWordIndex];
-            const englishText = el.querySelector('.gloss-english')?.textContent || '';
-            if (!englishText) {
+            const chineseText = el.querySelector('.gloss-chinese')?.textContent?.trim() || '';
+            if (!chineseText) {
                 ttsWordIndex++;
                 speakNextWord();
                 return;
@@ -562,12 +632,14 @@
 
             el.classList.add('speaking');
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${englishText}`);
 
-            const utterance = new SpeechSynthesisUtterance(englishText);
-            utterance.lang = 'en-US';
+            const englishText = el.querySelector('.gloss-english')?.textContent || '';
+            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${englishText} → ${chineseText}`);
+
+            const utterance = new SpeechSynthesisUtterance(chineseText);
+            utterance.lang = ttsLang;
             utterance.rate = 0.85;
-            const voice = getEnglishVoice();
+            const voice = getChineseVoice();
             if (voice) utterance.voice = voice;
 
             utterance.onend = () => {
@@ -589,7 +661,7 @@
         }
 
         // ============ FONT SIZE ============
-        const FONT_KEY = 'english_glosser_fontsize';
+        const FONT_KEY = 'reverse_english_glosser_fontsize';
         let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 20;
 
         function applyFontSize() {
@@ -655,6 +727,15 @@
 
             document.getElementById('fontIncrease').addEventListener('click', () => changeFontSize(2));
             document.getElementById('fontDecrease').addEventListener('click', () => changeFontSize(-2));
+
+            // TTS language toggle
+            document.getElementById('ttsSlider').addEventListener('click', toggleTTSLang);
+            document.getElementById('labelMandarin').addEventListener('click', () => {
+                if (ttsLang !== 'zh-CN') toggleTTSLang();
+            });
+            document.getElementById('labelCantonese').addEventListener('click', () => {
+                if (ttsLang !== 'zh-HK') toggleTTSLang();
+            });
 
             speechSynthesis.addEventListener('voiceschanged', () => speechSynthesis.getVoices());
 
