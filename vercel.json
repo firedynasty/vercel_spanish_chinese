@@ -8,6 +8,8 @@
     { "source": "/english-glosser", "destination": "/english-glosser.html" },
     { "source": "/reverse-english.html", "destination": "/reverse-english.html" },
     { "source": "/reverse-english", "destination": "/reverse-english.html" },
+    { "source": "/korean-glosser.html", "destination": "/korean-glosser.html" },
+    { "source": "/korean-glosser", "destination": "/korean-glosser.html" },
     { "source": "/(.*)", "destination": "/spanish-glosser.html" }
   ]
 }
