@@ -1,8 +1,8 @@
-<html lang="es">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spanish Glosser</title>
+    <title>French Glosser</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -159,7 +159,7 @@
             box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
         }
 
-        .gloss-spanish {
+        .gloss-french {
             font-size: 1.2rem;
             font-weight: 600;
             color: #ffd43b;
@@ -184,7 +184,7 @@
             background-color: transparent;
         }
 
-        .gloss-word.punctuation .gloss-spanish {
+        .gloss-word.punctuation .gloss-french {
             color: #6B7280;
         }
 
@@ -275,13 +275,13 @@
             .button-group { gap: 0.3rem; }
             button { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
             .gloss-area { padding: 1rem; }
-            .gloss-spanish { font-size: 1rem; }
+            .gloss-french { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Spanish Glosser</h1>
+        <h1>French Glosser</h1>
 
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
@@ -290,19 +290,19 @@
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
             <button class="btn-cache" id="clearCacheBtn">Clear Cache <span class="cache-count" id="cacheCount"></span></button>
+            <button style="background-color:#EF4444;font-size:0.8rem;" onclick="location.href='/spanish-glosser'">Spanish</button>
             <button style="background-color:#14B8A6;font-size:0.8rem;" onclick="location.href='/chinese-glosser'">Chinese</button>
             <button style="background-color:#3B82F6;font-size:0.8rem;" onclick="location.href='/english-glosser'">English</button>
             <button style="background-color:#8B5CF6;font-size:0.8rem;" onclick="location.href='/reverse-english'">Reverse English</button>
             <button style="background-color:#F472B6;font-size:0.8rem;" onclick="location.href='/korean-glosser'">Korean</button>
-            <button style="background-color:#F97316;font-size:0.8rem;" onclick="location.href='/french-glosser'">French</button>
             <button class="font-size-btn" id="fontDecrease" title="Decrease font size">-</button>
             <button class="font-size-btn" id="fontIncrease" title="Increase font size">+</button>
             <button class="btn-paste2nd" id="paste2ndBtn">Paste 2nd</button>
         </div>
 
-        <textarea id="inputArea" placeholder="Paste Spanish text here..."></textarea>
+        <textarea id="inputArea" placeholder="Paste French text here..."></textarea>
 
-        <div class="status" id="status">Ready - paste Spanish text and click Gloss</div>
+        <div class="status" id="status">Ready - paste French text and click Gloss</div>
 
         <div class="gloss-area" id="glossArea">
             <div class="placeholder">Glossed text will appear here</div>
@@ -321,7 +321,7 @@
 
     <script>
         // ============ DICTIONARY CACHE ============
-        const CACHE_KEY = 'spanish_glosser_cache';
+        const CACHE_KEY = 'french_glosser_cache';
 
         function getCache() {
             try {
@@ -351,20 +351,18 @@
         }
 
         // ============ TRANSLATION API ============
-        // Uses MyMemory free translation API (no key required)
         async function translateWord(word) {
             const cached = getCachedWord(word);
             if (cached) return cached;
 
             try {
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=es|en&de=stanley.tan19@gmail.com`;
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=fr|en&de=stanley.tan19@gmail.com`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('API error');
                 const data = await response.json();
 
                 const mainTranslation = data.responseData?.translatedText || '';
 
-                // Gather alternative translations from matches
                 const alternatives = [];
                 if (data.matches) {
                     for (const match of data.matches) {
@@ -394,7 +392,7 @@
         // ============ TEXT PROCESSING ============
         function tokenize(text) {
             // Split into words and punctuation, preserving order
-            // Handles Spanish punctuation like inverted marks
+            // Handles French characters including accents, cedilla, ligatures
             // Splits into new gloss-lines after "." or ","
             const tokens = [];
             const lines = text.split('\n');
@@ -405,7 +403,7 @@
 
                 let currentLine = [];
                 let match;
-                const lineRegex = /([a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+)|([^\s])/g;
+                const lineRegex = /([a-zA-ZàâæçéèêëïîôœùûüÿÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ'-]+)|([^\s])/g;
                 while ((match = lineRegex.exec(line)) !== null) {
                     if (match[1]) {
                         currentLine.push({ type: 'word', text: match[1] });
@@ -438,7 +436,6 @@
 
             const glossArea = document.getElementById('glossArea');
             const lines = tokenize(input);
-            const allWords = [];
 
             // Collect unique words
             const uniqueWords = new Set();
@@ -458,7 +455,7 @@
 
             // Translate in batches to avoid rate limiting
             const BATCH_SIZE = 5;
-            const BATCH_DELAY = 300; // ms between batches
+            const BATCH_DELAY = 300;
             const translations = {};
 
             for (let i = 0; i < wordArray.length; i += BATCH_SIZE) {
@@ -472,7 +469,6 @@
 
                 await Promise.all(promises);
 
-                // Small delay between batches to be nice to the API
                 if (i + BATCH_SIZE < wordArray.length) {
                     await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
                 }
@@ -491,30 +487,26 @@
                         wordDiv.className = 'gloss-word';
                         const data = translations[token.text.toLowerCase()] || { translation: '?', alternatives: [] };
 
-                        // Short translation for inline display
                         let shortTranslation = data.translation || '?';
                         if (shortTranslation.length > 15) {
                             shortTranslation = shortTranslation.substring(0, 13) + '...';
                         }
 
                         wordDiv.innerHTML = `
-                            <span class="gloss-spanish">${escapeHtml(token.text)}</span>
+                            <span class="gloss-french">${escapeHtml(token.text)}</span>
                             <span class="gloss-english">${escapeHtml(shortTranslation.toLowerCase())}</span>
                         `;
 
                         wordDiv.addEventListener('click', () => {
-                            // Stop any play-all in progress
                             if (ttsPlaying) stopTTS();
-                            // Deselect others
                             document.querySelectorAll('.gloss-word.selected').forEach(el => el.classList.remove('selected'));
                             wordDiv.classList.add('selected');
                             showDetail(token.text, data);
-                            // Speak this word
                             speakWord(token.text);
                         });
                     } else {
                         wordDiv.className = 'gloss-word punctuation';
-                        wordDiv.innerHTML = `<span class="gloss-spanish">${escapeHtml(token.text)}</span><span class="gloss-english">&nbsp;</span>`;
+                        wordDiv.innerHTML = `<span class="gloss-french">${escapeHtml(token.text)}</span><span class="gloss-english">&nbsp;</span>`;
                     }
 
                     lineDiv.appendChild(wordDiv);
@@ -547,22 +539,21 @@
         let ttsWordElements = [];
         let ttsWordIndex = 0;
 
-        function getSpanishVoice() {
+        function getFrenchVoice() {
             const voices = speechSynthesis.getVoices();
-            // Prefer Google Spanish voice, then any es-ES, then any es-*
-            return voices.find(v => v.lang === 'es-ES' && v.name.includes('Google'))
-                || voices.find(v => v.lang === 'es-ES' && (v.name.includes('Enhanced') || v.name.includes('Premium')))
-                || voices.find(v => v.lang === 'es-ES')
-                || voices.find(v => v.lang.startsWith('es'))
+            return voices.find(v => v.lang === 'fr-FR' && v.name.includes('Google'))
+                || voices.find(v => v.lang === 'fr-FR' && (v.name.includes('Enhanced') || v.name.includes('Premium')))
+                || voices.find(v => v.lang === 'fr-FR')
+                || voices.find(v => v.lang.startsWith('fr'))
                 || null;
         }
 
         function speakWord(word) {
             speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'es-ES';
+            utterance.lang = 'fr-FR';
             utterance.rate = 0.85;
-            const voice = getSpanishVoice();
+            const voice = getFrenchVoice();
             if (voice) utterance.voice = voice;
             speechSynthesis.speak(utterance);
         }
@@ -571,13 +562,11 @@
             speechSynthesis.cancel();
             ttsPlaying = false;
             ttsWordIndex = 0;
-            // Clear all speaking highlights
             document.querySelectorAll('.gloss-word.speaking').forEach(el => el.classList.remove('speaking'));
             setStatus('Stopped');
         }
 
         function playAllWords() {
-            // Gather all non-punctuation gloss-word elements in order
             ttsWordElements = [...document.querySelectorAll('.gloss-word:not(.punctuation)')];
             if (ttsWordElements.length === 0) {
                 setStatus('Nothing to play - gloss some text first');
@@ -592,33 +581,30 @@
 
         function speakNextWord() {
             if (!ttsPlaying || ttsWordIndex >= ttsWordElements.length) {
-                // Done
                 ttsPlaying = false;
                 document.querySelectorAll('.gloss-word.speaking').forEach(el => el.classList.remove('speaking'));
                 if (ttsWordIndex >= ttsWordElements.length) setStatus('Finished reading');
                 return;
             }
 
-            // Clear previous highlight
             document.querySelectorAll('.gloss-word.speaking').forEach(el => el.classList.remove('speaking'));
 
             const el = ttsWordElements[ttsWordIndex];
-            const spanishText = el.querySelector('.gloss-spanish')?.textContent || '';
-            if (!spanishText) {
+            const frenchText = el.querySelector('.gloss-french')?.textContent || '';
+            if (!frenchText) {
                 ttsWordIndex++;
                 speakNextWord();
                 return;
             }
 
-            // Highlight current word
             el.classList.add('speaking');
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${spanishText}`);
+            setStatus(`Playing ${ttsWordIndex + 1}/${ttsWordElements.length}: ${frenchText}`);
 
-            const utterance = new SpeechSynthesisUtterance(spanishText);
-            utterance.lang = 'es-ES';
+            const utterance = new SpeechSynthesisUtterance(frenchText);
+            utterance.lang = 'fr-FR';
             utterance.rate = 0.85;
-            const voice = getSpanishVoice();
+            const voice = getFrenchVoice();
             if (voice) utterance.voice = voice;
 
             utterance.onend = () => {
@@ -652,11 +638,11 @@
         }
 
         // ============ FONT SIZE ============
-        const FONT_KEY = 'spanish_glosser_fontsize';
+        const FONT_KEY = 'french_glosser_fontsize';
         let glossFontSize = parseInt(localStorage.getItem(FONT_KEY)) || 20;
 
         function applyFontSize() {
-            document.querySelectorAll('.gloss-spanish').forEach(el => {
+            document.querySelectorAll('.gloss-french').forEach(el => {
                 el.style.fontSize = glossFontSize + 'px';
             });
             document.querySelectorAll('.gloss-english').forEach(el => {

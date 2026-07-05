@@ -10,6 +10,8 @@
     { "source": "/reverse-english", "destination": "/reverse-english.html" },
     { "source": "/korean-glosser.html", "destination": "/korean-glosser.html" },
     { "source": "/korean-glosser", "destination": "/korean-glosser.html" },
+    { "source": "/french-glosser.html", "destination": "/french-glosser.html" },
+    { "source": "/french-glosser", "destination": "/french-glosser.html" },
     { "source": "/(.*)", "destination": "/spanish-glosser.html" }
   ]
 }
