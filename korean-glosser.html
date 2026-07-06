@@ -303,6 +303,7 @@
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
             <button class="btn-gloss" id="glossBtn">Gloss</button>
+            <button class="btn-gloss" id="noGlossBtn" style="background:#6b7280;">No Gloss</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
@@ -612,6 +613,86 @@
             applyFontSize();
         }
 
+        function noGlossLyrics() {
+            const input = document.getElementById('inputArea').value.trim();
+            if (!input) {
+                setStatus('No text to format');
+                return;
+            }
+
+            const glossArea = document.getElementById('glossArea');
+            const blocks = parseLyrics(input);
+
+            if (blocks.length === 0) {
+                setStatus('Could not parse any lyric blocks');
+                return;
+            }
+
+            glossArea.innerHTML = '';
+
+            for (const block of blocks) {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'lyric-block';
+
+                if (block.english) {
+                    const engDiv = document.createElement('div');
+                    engDiv.className = 'lyric-english';
+                    engDiv.textContent = block.english;
+                    blockDiv.appendChild(engDiv);
+                }
+
+                if (block.korean) {
+                    const wordsRow = document.createElement('div');
+                    wordsRow.className = 'lyric-words-row';
+
+                    const tokens = tokenizeKorean(block.korean);
+                    for (const token of tokens) {
+                        const wordDiv = document.createElement('div');
+
+                        if (token.type === 'word' && containsKorean(token.text)) {
+                            wordDiv.className = 'gloss-word';
+                            wordDiv.innerHTML = `
+                                <span class="gloss-korean">${escapeHtml(token.text)}</span>
+                                <span class="gloss-english">&nbsp;</span>
+                            `;
+
+                            wordDiv.addEventListener('click', () => {
+                                if (ttsPlaying) stopTTS();
+                                document.querySelectorAll('.gloss-word.selected').forEach(el => el.classList.remove('selected'));
+                                wordDiv.classList.add('selected');
+                                speakWord(token.text);
+                            });
+                        } else if (token.type === 'word') {
+                            wordDiv.className = 'gloss-word';
+                            wordDiv.innerHTML = `
+                                <span class="gloss-korean">${escapeHtml(token.text)}</span>
+                                <span class="gloss-english">&nbsp;</span>
+                            `;
+                        } else {
+                            wordDiv.className = 'gloss-word punctuation';
+                            wordDiv.innerHTML = `<span class="gloss-korean">${escapeHtml(token.text)}</span><span class="gloss-english">&nbsp;</span>`;
+                        }
+
+                        wordsRow.appendChild(wordDiv);
+                    }
+
+                    blockDiv.appendChild(wordsRow);
+                }
+
+                if (block.roman) {
+                    const romDiv = document.createElement('div');
+                    romDiv.className = 'lyric-roman';
+                    romDiv.textContent = block.roman;
+                    blockDiv.appendChild(romDiv);
+                }
+
+                glossArea.appendChild(blockDiv);
+            }
+
+            setStatus(`Formatted (no gloss) - ${blocks.length} lines`);
+            applyFontSize();
+        }
+
         function showDetail(word, data) {
             const panel = document.getElementById('detailPanel');
             document.getElementById('detailWord').textContent = word;
@@ -789,6 +870,7 @@
             });
 
             document.getElementById('glossBtn').addEventListener('click', glossLyrics);
+            document.getElementById('noGlossBtn').addEventListener('click', noGlossLyrics);
             document.getElementById('paste2ndBtn').addEventListener('click', paste2nd);
 
             document.getElementById('clearBtn').addEventListener('click', () => {

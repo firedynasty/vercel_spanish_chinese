@@ -266,6 +266,7 @@
         <div class="button-group">
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
             <button class="btn-gloss" id="glossBtn">Gloss</button>
+            <button class="btn-gloss" id="noGlossBtn" style="background:#6b7280;">No Gloss</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
@@ -485,6 +486,52 @@
             applyFontSize();
         }
 
+        function noGlossText() {
+            const input = document.getElementById('inputArea').value.trim();
+            if (!input) {
+                setStatus('No text to format');
+                return;
+            }
+
+            const glossArea = document.getElementById('glossArea');
+            const lines = tokenize(input);
+
+            glossArea.innerHTML = '';
+            for (const line of lines) {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'gloss-line';
+
+                for (const token of line) {
+                    const wordDiv = document.createElement('div');
+
+                    if (token.type === 'word') {
+                        wordDiv.className = 'gloss-word';
+                        wordDiv.innerHTML = `
+                            <span class="gloss-english">${escapeHtml(token.text)}</span>
+                            <span class="gloss-chinese">&nbsp;</span>
+                        `;
+
+                        wordDiv.addEventListener('click', () => {
+                            if (ttsPlaying) stopTTS();
+                            document.querySelectorAll('.gloss-word.selected').forEach(el => el.classList.remove('selected'));
+                            wordDiv.classList.add('selected');
+                            speakWord(token.text);
+                        });
+                    } else {
+                        wordDiv.className = 'gloss-word punctuation';
+                        wordDiv.innerHTML = `<span class="gloss-english">${escapeHtml(token.text)}</span><span class="gloss-chinese">&nbsp;</span>`;
+                    }
+
+                    lineDiv.appendChild(wordDiv);
+                }
+
+                glossArea.appendChild(lineDiv);
+            }
+
+            setStatus('Formatted (no gloss)');
+            applyFontSize();
+        }
+
         function showDetail(word, data) {
             const panel = document.getElementById('detailPanel');
             document.getElementById('detailWord').textContent = word;
@@ -644,6 +691,7 @@
             });
 
             document.getElementById('glossBtn').addEventListener('click', glossText);
+            document.getElementById('noGlossBtn').addEventListener('click', noGlossText);
 
             document.getElementById('clearBtn').addEventListener('click', () => {
                 document.getElementById('inputArea').value = '';
