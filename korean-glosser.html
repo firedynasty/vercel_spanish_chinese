@@ -304,6 +304,7 @@
             <button class="btn-paste" id="pasteBtn">Paste (Esc)</button>
             <button class="btn-gloss" id="glossBtn">Gloss</button>
             <button class="btn-gloss" id="noGlossBtn" style="background:#6b7280;">No Gloss</button>
+            <button class="btn-gloss" id="copyLinesBtn" style="background:#059669;">Copy Lines</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
             <button class="btn-play" id="playAllBtn">Play All</button>
             <button class="btn-stop" id="stopBtn">Stop</button>
@@ -871,6 +872,13 @@
 
             document.getElementById('glossBtn').addEventListener('click', glossLyrics);
             document.getElementById('noGlossBtn').addEventListener('click', noGlossLyrics);
+            document.getElementById('copyLinesBtn').addEventListener('click', async () => {
+                const words = document.querySelectorAll('#glossArea .gloss-word:not(.punctuation) .gloss-korean');
+                if (words.length === 0) { setStatus('Nothing to copy'); return; }
+                const text = [...words].map(el => el.textContent.trim()).join('\n');
+                await navigator.clipboard.writeText(text);
+                setStatus(`Copied ${words.length} words to clipboard`);
+            });
             document.getElementById('paste2ndBtn').addEventListener('click', paste2nd);
 
             document.getElementById('clearBtn').addEventListener('click', () => {
